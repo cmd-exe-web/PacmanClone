@@ -18,12 +18,15 @@ Game::Game()
 		std::cerr << "SDL_CreateRenderer failed. Error: " << SDL_GetError() << std::endl;
 		exit(EXIT_FAILURE);
 	}
+	maze = Maze(renderer);
+	pacman = Pacman(renderer);
 }
 
 Game::~Game()
 {	
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+	SDL_Quit();
 }
 
 void Game::Run()
@@ -52,11 +55,15 @@ void Game::HandleEvents()
 			running = false;
 			break;
 		}
+		if (event.type == SDL_KEYDOWN) {
+			pacman.HandleInput(event.key.keysym.sym);
+		}
 	}
 }
 
 void Game::Update()
 {
+	pacman.Update(maze);
 }
 
 void Game::Render()
@@ -65,6 +72,8 @@ void Game::Render()
 	SDL_RenderClear(renderer);
 
 	//Stuff to Draw
+	maze.Draw();
+	pacman.Draw();
 
 	SDL_RenderPresent(renderer);
 }
