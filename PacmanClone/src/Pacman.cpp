@@ -72,42 +72,52 @@ void Pacman::Update(Maze& maze)
 	if (newDirection == down) {
 		newY += velocity;
 	}
-	// If sprite can move in the new direction, then do
-	if (CanMove(newX, newY, maze)) {
-		x = newX;
-		y = newY;
-		currentDirection = newDirection;
-		isMoving = true;
-		if (maze.IsFood(newX, newY)) {
-			maze.ConsumeFood(newX, newY);
-		}
+
+	if (newX + TILE_SIZE > SCREEN_WIDTH) {
+		x = 0;
 	}
-	// Else check if you can keep moving in the current direction
-	else
-	{
-		newX = x, newY = y;
-		if (currentDirection == right) {
-			newX += velocity;
-		}
-		if (currentDirection == up) {
-			newY -= velocity;
-		}
-		if (currentDirection == left) {
-			newX -= velocity;
-		}
-		if (currentDirection == down) {
-			newY += velocity;
-		}
-		// If sprite can keep moving in the current direction, then do
+	else if (newX < 0) {
+		x = SCREEN_WIDTH - TILE_SIZE;
+	}
+	else {
+
+		// If sprite can move in the new direction, then do
 		if (CanMove(newX, newY, maze)) {
 			x = newX;
 			y = newY;
+			currentDirection = newDirection;
+			isMoving = true;
 			if (maze.IsFood(newX, newY)) {
 				maze.ConsumeFood(newX, newY);
 			}
 		}
-		else {
-			isMoving = false;
+		// Else check if you can keep moving in the current direction
+		else
+		{
+			newX = x, newY = y;
+			if (currentDirection == right) {
+				newX += velocity;
+			}
+			if (currentDirection == up) {
+				newY -= velocity;
+			}
+			if (currentDirection == left) {
+				newX -= velocity;
+			}
+			if (currentDirection == down) {
+				newY += velocity;
+			}
+			// If sprite can keep moving in the current direction, then do
+			if (CanMove(newX, newY, maze)) {
+				x = newX;
+				y = newY;
+				if (maze.IsFood(newX, newY)) {
+					maze.ConsumeFood(newX, newY);
+				}
+			}
+			else {
+				isMoving = false;
+			}
 		}
 	}
 

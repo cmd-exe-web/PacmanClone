@@ -42,4 +42,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\images\pacmansprite-1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\images\pacman-maze-4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

@@ -158,6 +158,10 @@
     <ClInclude Include="include\Maze.h" />
     <ClInclude Include="include\Pacman.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\images\pacman-maze-4.bmp" />
+    <Image Include="assets\images\pacmansprite-1.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
