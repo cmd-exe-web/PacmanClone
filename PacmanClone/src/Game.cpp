@@ -56,7 +56,12 @@ void Game::HandleEvents()
 			break;
 		}
 		if (event.type == SDL_KEYDOWN) {
-			pacman.HandleInput(event.key.keysym.sym);
+			if (event.key.keysym.sym == SDLK_ESCAPE) {
+				running = false;
+			}
+			else {
+				pacman.HandleInput(event.key.keysym.sym);
+			}
 		}
 	}
 }

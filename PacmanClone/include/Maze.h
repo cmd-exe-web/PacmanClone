@@ -11,6 +11,8 @@ public:
 	Maze(SDL_Renderer* renderer);
 	void Draw();
 	bool IsPath(int x, int y);
+	bool IsFood(int x, int y);
+	void ConsumeFood(int x, int y);
 private:
 	std::vector<std::string> layout;
 	int tileSize;

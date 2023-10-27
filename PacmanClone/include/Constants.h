@@ -10,7 +10,7 @@ const int COLS = SCREEN_WIDTH / 31;
 const int TILE_SIZE = 20;
 
 enum Direction {
-	none, right, up, left, down
+	right, down, left, up, none
 };
 
 /*

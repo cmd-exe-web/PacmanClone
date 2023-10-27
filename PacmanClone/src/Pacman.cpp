@@ -9,7 +9,7 @@ Pacman::Pacman()
 }
 
 Pacman::Pacman(SDL_Renderer* renderer)
-	:x(20), y(20), renderer(renderer)
+	:x(20 * 14), y(20 * 23), renderer(renderer)
 {
 	IMG_Init(IMG_INIT_PNG);
 
@@ -29,25 +29,33 @@ Pacman::Pacman(SDL_Renderer* renderer)
 		exit(EXIT_FAILURE);
 	}
 	SDL_FreeSurface(surface);
+
+
+	frameHeight = 32;
+	frameWidth = 32;
+	currentFrame = 0;
+	maxFrame = 5;
+	animationSpeed = 50;
+	lastFrameChangeTime = SDL_GetTicks();
 }
 
 void Pacman::HandleInput(SDL_Keycode key)
 {
-	if (key == SDLK_w) {
+	if (key == SDLK_w || key == SDLK_UP) {
 		newDirection = up;
 	}
-	if (key == SDLK_a) {
+	if (key == SDLK_a || key == SDLK_LEFT) {
 		newDirection = left;
 	}
-	if (key == SDLK_s) {
+	if (key == SDLK_s || key == SDLK_DOWN) {
 		newDirection = down;
 	}
-	if (key == SDLK_d) {
+	if (key == SDLK_d || key == SDLK_RIGHT) {
 		newDirection = right;
 	}
 }
 
-void Pacman::Update(Maze maze)
+void Pacman::Update(Maze& maze)
 {
 	int newX = x;
 	int newY = y;
@@ -64,11 +72,15 @@ void Pacman::Update(Maze maze)
 	if (newDirection == down) {
 		newY += velocity;
 	}
-	// If can move in the new direction, then do
-	if (CanMove(newX, newY, newDirection, maze)) {
+	// If sprite can move in the new direction, then do
+	if (CanMove(newX, newY, maze)) {
 		x = newX;
 		y = newY;
 		currentDirection = newDirection;
+		isMoving = true;
+		if (maze.IsFood(newX, newY)) {
+			maze.ConsumeFood(newX, newY);
+		}
 	}
 	// Else check if you can keep moving in the current direction
 	else
@@ -86,15 +98,33 @@ void Pacman::Update(Maze maze)
 		if (currentDirection == down) {
 			newY += velocity;
 		}
-		// If can keep moving in the current direction, then do
-		if (CanMove(newX, newY, currentDirection, maze)) {
+		// If sprite can keep moving in the current direction, then do
+		if (CanMove(newX, newY, maze)) {
 			x = newX;
 			y = newY;
+			if (maze.IsFood(newX, newY)) {
+				maze.ConsumeFood(newX, newY);
+			}
+		}
+		else {
+			isMoving = false;
+		}
+	}
+
+	if (isMoving) {
+		// Calculate time since the last frame change of the sprite animation
+		Uint32 currentTime = SDL_GetTicks();
+		Uint32 elapsedTime = currentTime - lastFrameChangeTime;
+
+		if (elapsedTime >= animationSpeed) {
+			// Update the current frame of animation if enough time has passed
+			currentFrame = (currentFrame + 1) % maxFrame;
+			lastFrameChangeTime = SDL_GetTicks();
 		}
 	}
 }
 
-bool Pacman::CanMove(float x, float y, Direction direction, Maze maze)
+bool Pacman::CanMove(float x, float y, Maze& maze)
 {
 	float errorFactor = 0.99 * TILE_SIZE;
 
@@ -108,7 +138,9 @@ bool Pacman::CanMove(float x, float y, Direction direction, Maze maze)
 
 void Pacman::Draw()
 {
-	SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-	SDL_Rect rect = { x - 8, y - 8, TILE_SIZE + 2 * 8, TILE_SIZE + 2 * 8 };
-	SDL_RenderFillRect(renderer, &rect);
+	// The part of the sprite sheet texture that gets output
+	SDL_Rect srcRect = { currentFrame * frameWidth, currentDirection * frameHeight, frameWidth, frameHeight };
+	// The actual place in the window where the sprite frame is rendered
+	SDL_Rect dstRect = { x - 8, y - 8, TILE_SIZE + 2 * 8, TILE_SIZE + 2 * 8 };
+	SDL_RenderCopy(renderer, texture, &srcRect, &dstRect);
 }
