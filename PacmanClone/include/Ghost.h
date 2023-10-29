@@ -29,11 +29,14 @@ public:
 	Ghost();
 	Ghost(SDL_Renderer* renderer);
 	virtual void Update(Maze& maze, Pacman& pacman);
+	Direction GetReverseDirection(Direction direction);
 	void MoveRandomly(Maze& maze);
 	std::vector<Direction> TurnsAvailable(Maze& maze);
 	bool CanMove(float x, float y, Maze maze);
-	Direction ClosestPath(SDL_Point target);
 	bool CoincidesIntersection(float x, float y, Maze& maze);
+	void SetTarget(SDL_Point target);
+	std::vector<Direction> ClosestPath(SDL_Point target);
+	float GetDistance(SDL_Point point1, SDL_Point point2);
 	virtual void Draw();
 private:
 	int x, y;
@@ -41,7 +44,7 @@ private:
 	Direction currentDirection;
 	SDL_Renderer* renderer;
 
-	SDL_Point target;
+	SDL_Point currentTarget;
 	Mode currentMode;
 
 	GhostType ghostType = Blinky;

@@ -104,7 +104,7 @@ void Maze::Draw()
 
 bool Maze::IsPath(int x, int y)
 {
-	if (x < 0 || y < 0 || x > MAZE_WIDTH || y > MAZE_HEIGHT) {
+	if (x < 0 || y < 0 || x >= MAZE_WIDTH || y >= MAZE_HEIGHT) {
 		return false;
 	}
 

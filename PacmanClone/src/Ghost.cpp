@@ -34,6 +34,79 @@ Ghost::Ghost(SDL_Renderer* renderer)
 void Ghost::Update(Maze& maze, Pacman& pacman)
 {
 	int newX = x, newY = y;
+	if (currentDirection == Right) {
+		newX += velocity;
+	}
+	if (currentDirection == Left) {
+		newX -= velocity;
+	}
+	if (currentDirection == Up) {
+		newY -= velocity;
+	}
+	if (currentDirection == Down) {
+		newY += velocity;
+	}
+
+	// Check warping through tunnels is possible
+	if (newX + TILE_SIZE > MAZE_WIDTH) {
+		x = 0;
+	}
+	else if (newX < 0) {
+		x = MAZE_WIDTH - TILE_SIZE;
+	}
+	// Else check if its coinciding with a intersection or a dead-end turn
+	else if (!CanMove(newX, newY, maze) || CoincidesIntersection(x, y, maze)) {
+		auto closestPaths = ClosestPath({ pacman.x, pacman.y });
+		std::vector<Direction> availableDirections = TurnsAvailable(maze);
+
+		Direction reverseDirection = GetReverseDirection(currentDirection);
+
+		auto it = std::find(availableDirections.begin(), availableDirections.end(), reverseDirection);
+		if (it != availableDirections.end()) {
+			availableDirections.erase(it);
+		}
+
+		for (int i = 0; i < closestPaths.size(); i++) {
+			if (std::find(availableDirections.begin(), availableDirections.end(), closestPaths[i]) == availableDirections.end()) {
+				closestPaths.erase(closestPaths.begin() + i);
+				i--;
+			}
+		}
+
+		Direction newDirection = closestPaths[0];
+
+		if (newDirection == Right) {
+			x += velocity;
+		}
+		if (newDirection == Up) {
+			y -= velocity;
+		}
+		if (newDirection == Left) {
+			x -= velocity;
+		}
+		if (newDirection == Down) {
+			y += velocity;
+		}
+		currentDirection = newDirection;
+	}
+	// Else continue to move in current path
+	else {
+		x = newX;
+		y = newY;
+	}
+}
+
+Direction Ghost::GetReverseDirection(Direction direction)
+{	
+	if (direction == Right) return Left;
+	else if (direction == Left) return Right;
+	else if (direction == Up) return Down;
+	else return Up;
+}
+
+void Ghost::MoveRandomly(Maze& maze)
+{
+	int newX = x, newY = y;
 
 	if (currentDirection == Right) {
 		newX += velocity;
@@ -66,12 +139,7 @@ void Ghost::Update(Maze& maze, Pacman& pacman)
 		else {
 			std::vector<Direction> turnsAvailable = TurnsAvailable(maze);
 
-			Direction reverseDirection;
-
-			if (currentDirection == Right) reverseDirection = Left;
-			if (currentDirection == Left) reverseDirection = Right;
-			if (currentDirection == Up) reverseDirection = Down;
-			if (currentDirection == Down) reverseDirection = Up;
+			Direction reverseDirection = GetReverseDirection(currentDirection);
 
 			auto it = std::find(turnsAvailable.begin(), turnsAvailable.end(), reverseDirection);
 			if (it != turnsAvailable.end()) {
@@ -102,58 +170,6 @@ void Ghost::Update(Maze& maze, Pacman& pacman)
 			}
 			currentDirection = newDirection;
 		}
-	}
-}
-
-void Ghost::MoveRandomly(Maze& maze)
-{
-	int newX = x, newY = y;
-	
-	if (currentDirection == Right) {
-		newX += velocity;
-	}
-	if (currentDirection == Left) {
-		newX -= velocity;
-	}
-	if (currentDirection == Up) {
-		newY -= velocity;
-	}
-	if (currentDirection == Down) {
-		newY += velocity;
-	}
-
-	// If sprite can continue moving in the current direction, then do
-	if (CanMove(newX, newY, maze)) {
-		x = newX;
-		y = newY;
-	}
-	// Else find a new valid direction to move in
-	else {
-		std::vector<Direction> turnsAvailable = TurnsAvailable(maze);
-
-		Direction newDirection;
-		int availableDirections = turnsAvailable.size();
-
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> dist(0, availableDirections - 1);
-
-		int randomDirection = dist(gen);
-		newDirection = turnsAvailable[randomDirection];
-
-		if (newDirection == Right) {
-			x += velocity;
-		}
-		if (newDirection == Up) {
-			y -= velocity;
-		}
-		if (newDirection == Left) {
-			x -= velocity;
-		}
-		if (newDirection == Down) {
-			y += velocity;
-		}
-		currentDirection = newDirection;
 	}
 }
 
@@ -202,10 +218,6 @@ bool Ghost::CanMove(float x, float y, Maze maze)
 	return false;
 }
 
-Direction Ghost::ClosestPath(SDL_Point target)
-{
-	return Direction();
-}
 
 bool Ghost::CoincidesIntersection(float x, float y, Maze& maze)
 {
@@ -215,6 +227,36 @@ bool Ghost::CoincidesIntersection(float x, float y, Maze& maze)
 		return true;
 	}
 	return false;
+}
+
+void Ghost::SetTarget(SDL_Point target)
+{
+	currentTarget = target;
+}
+
+std::vector<Direction> Ghost::ClosestPath(SDL_Point target)
+{
+	std::vector<std::pair<int, Direction>> distances;
+	distances.push_back({ GetDistance({ x + TILE_SIZE, y }, target), Right });
+	distances.push_back({ GetDistance({ x - TILE_SIZE, y }, target), Left });
+	distances.push_back({ GetDistance({ x, y - TILE_SIZE }, target), Up });
+	distances.push_back({ GetDistance({ x, y + TILE_SIZE }, target), Down });
+
+	std::sort(distances.begin(), distances.end());
+
+	std::vector<Direction> sortedDirections(4);
+
+	for (int i = 0; i < 4; i++) {
+		sortedDirections[i] = distances[i].second;
+	}
+
+	return sortedDirections;
+}
+
+
+float Ghost::GetDistance(SDL_Point point1, SDL_Point point2)
+{
+	return abs(point1.x - point2.x) + abs(point1.y - point2.y);
 }
 
 void Ghost::Draw()
