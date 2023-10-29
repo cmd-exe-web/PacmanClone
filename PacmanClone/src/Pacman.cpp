@@ -11,10 +11,8 @@ Pacman::Pacman()
 Pacman::Pacman(SDL_Renderer* renderer)
 	:x(20 * 14), y(20 * 23), renderer(renderer)
 {
-	IMG_Init(IMG_INIT_PNG);
-
-	currentDirection = right;
-	newDirection = none;
+	currentDirection = Right;
+	newDirection = None;
 
 	SDL_Surface* surface = IMG_Load("assets/images/pacmansprite-1.png");
 	if (surface == nullptr) {
@@ -42,16 +40,16 @@ Pacman::Pacman(SDL_Renderer* renderer)
 void Pacman::HandleInput(SDL_Keycode key)
 {
 	if (key == SDLK_w || key == SDLK_UP) {
-		newDirection = up;
+		newDirection = Up;
 	}
 	if (key == SDLK_a || key == SDLK_LEFT) {
-		newDirection = left;
+		newDirection = Left;
 	}
 	if (key == SDLK_s || key == SDLK_DOWN) {
-		newDirection = down;
+		newDirection = Down;
 	}
 	if (key == SDLK_d || key == SDLK_RIGHT) {
-		newDirection = right;
+		newDirection = Right;
 	}
 }
 
@@ -60,25 +58,27 @@ void Pacman::Update(Maze& maze)
 	int newX = x;
 	int newY = y;
 	// Check to see if you can move in the new direction
-	if (newDirection == right) {
+	if (newDirection == Right) {
 		newX += velocity;
 	}
-	if (newDirection == up) {
+	if (newDirection == Up) {
 		newY -= velocity;
 	}
-	if (newDirection == left) {
+	if (newDirection == Left) {
 		newX -= velocity;
 	}
-	if (newDirection == down) {
+	if (newDirection == Down) {
 		newY += velocity;
 	}
 
-	if (newX + TILE_SIZE > SCREEN_WIDTH) {
+	// Check warping through tunnels is possible
+	if (newX + TILE_SIZE > MAZE_WIDTH) {
 		x = 0;
 	}
 	else if (newX < 0) {
-		x = SCREEN_WIDTH - TILE_SIZE;
+		x = MAZE_WIDTH - TILE_SIZE;
 	}
+	// Else continue regular movement
 	else {
 
 		// If sprite can move in the new direction, then do
@@ -95,16 +95,16 @@ void Pacman::Update(Maze& maze)
 		else
 		{
 			newX = x, newY = y;
-			if (currentDirection == right) {
+			if (currentDirection == Right) {
 				newX += velocity;
 			}
-			if (currentDirection == up) {
+			if (currentDirection == Up) {
 				newY -= velocity;
 			}
-			if (currentDirection == left) {
+			if (currentDirection == Left) {
 				newX -= velocity;
 			}
-			if (currentDirection == down) {
+			if (currentDirection == Down) {
 				newY += velocity;
 			}
 			// If sprite can keep moving in the current direction, then do

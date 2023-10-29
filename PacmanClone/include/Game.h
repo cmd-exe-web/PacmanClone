@@ -7,6 +7,8 @@
 #include "Constants.h"
 #include "Maze.h"
 #include "Pacman.h"
+#include "Ghost.h"
+#include "BottomHUD.h"
 
 class Game {
 public:
@@ -23,9 +25,9 @@ private:
 	std::string title = "PacMan Clone";
 	
 	int delayTime = 1000 / targetFps;
-
 	bool running = true;
 
 	Maze maze;
 	Pacman pacman;
+	Ghost ghost;
 };

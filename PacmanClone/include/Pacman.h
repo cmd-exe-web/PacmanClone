@@ -15,7 +15,7 @@ public:
 	void Draw();
 public:
 	int x, y;
-	int velocity = 1;
+	float velocity = 1;
 	Direction currentDirection;
 	Direction newDirection;
 	bool isMoving = true; // Primarily used for the sprite animation
@@ -29,6 +29,4 @@ public:
 	int maxFrame; // Total frame per animation
 	int animationSpeed; // Speed at which frames change (in milliseconds)
 	Uint32 lastFrameChangeTime; // Time when the last frame change occurred
-
-
 };

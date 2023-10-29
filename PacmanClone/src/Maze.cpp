@@ -104,6 +104,10 @@ void Maze::Draw()
 
 bool Maze::IsPath(int x, int y)
 {
+	if (x < 0 || y < 0 || x > MAZE_WIDTH || y > MAZE_HEIGHT) {
+		return false;
+	}
+
 	int indexX = x / tileSize;
 	int indexY = y / tileSize;
 
@@ -119,10 +123,25 @@ bool Maze::IsFood(int x, int y)
 	return layout[indexY][indexX] == '.';
 }
 
+bool Maze::IsIntersection(int x, int y)
+{
+	int walkableNeighbour = 0;
+	if (IsPath(x + tileSize, y))walkableNeighbour++;
+	if (IsPath(x - tileSize, y))walkableNeighbour++;
+	if (IsPath(x, y + tileSize))walkableNeighbour++;
+	if (IsPath(x, y - tileSize))walkableNeighbour++;
+
+	if (walkableNeighbour > 2)
+		return true;
+	else
+		return false;
+}
+
 void Maze::ConsumeFood(int x, int y)
 {
 	int indexX = x / tileSize;
 	int indexY = y / tileSize;
 	
 	layout[indexY][indexX] = ' ';
+	score += 10;
 }
