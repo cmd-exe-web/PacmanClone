@@ -20,7 +20,7 @@ struct Channels {
 	int count = 0;
 };
 
-enum GhostType {
+enum class GhostType : int {
 	Blinky, Inky, Pinky, Clyde
 };
 
@@ -29,17 +29,20 @@ public:
 	Ghost();
 	Ghost(SDL_Renderer* renderer);
 	virtual void Update(Maze& maze, Pacman& pacman);
-	Direction GetReverseDirection(Direction direction);
+	void ChaseTarget(SDL_Point target, Maze& maze);
 	void MoveRandomly(Maze& maze);
+	Direction GetReverseDirection(Direction direction);
 	std::vector<Direction> TurnsAvailable(Maze& maze);
 	bool CanMove(float x, float y, Maze maze);
 	bool CoincidesIntersection(float x, float y, Maze& maze);
 	void SetTarget(SDL_Point target);
 	std::vector<Direction> ClosestPath(SDL_Point target);
 	float GetDistance(SDL_Point point1, SDL_Point point2);
-	virtual void Draw();
-private:
+	void Draw();
+protected:
+	GhostType ghostType;
 	int x, y;
+private:
 	float velocity = 1;
 	Direction currentDirection;
 	SDL_Renderer* renderer;
@@ -47,7 +50,6 @@ private:
 	SDL_Point currentTarget;
 	Mode currentMode;
 
-	GhostType ghostType = Blinky;
 	SDL_Texture* texture;
 	int frameWidth, frameHeight;
 };

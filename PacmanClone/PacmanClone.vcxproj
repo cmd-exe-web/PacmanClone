@@ -153,6 +153,7 @@
     <ClCompile Include="src\BottomHUD.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Ghost.cpp" />
+    <ClCompile Include="src\Inky.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Maze.cpp" />
     <ClCompile Include="src\Pacman.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="include\Constants.h" />
     <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\Ghost.h" />
+    <ClInclude Include="include\Inky.h" />
     <ClInclude Include="include\Maze.h" />
     <ClInclude Include="include\Pacman.h" />
   </ItemGroup>

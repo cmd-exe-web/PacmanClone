@@ -33,6 +33,10 @@ Ghost::Ghost(SDL_Renderer* renderer)
 
 void Ghost::Update(Maze& maze, Pacman& pacman)
 {
+}
+
+void Ghost::ChaseTarget(SDL_Point target, Maze& maze)
+{
 	int newX = x, newY = y;
 	if (currentDirection == Right) {
 		newX += velocity;
@@ -56,7 +60,7 @@ void Ghost::Update(Maze& maze, Pacman& pacman)
 	}
 	// Else check if its coinciding with a intersection or a dead-end turn
 	else if (!CanMove(newX, newY, maze) || CoincidesIntersection(x, y, maze)) {
-		auto closestPaths = ClosestPath({ pacman.x, pacman.y });
+		auto closestPaths = ClosestPath({ target.x, target.y });
 		std::vector<Direction> availableDirections = TurnsAvailable(maze);
 
 		Direction reverseDirection = GetReverseDirection(currentDirection);
@@ -237,10 +241,10 @@ void Ghost::SetTarget(SDL_Point target)
 std::vector<Direction> Ghost::ClosestPath(SDL_Point target)
 {
 	std::vector<std::pair<int, Direction>> distances;
-	distances.push_back({ GetDistance({ x + TILE_SIZE, y }, target), Right });
-	distances.push_back({ GetDistance({ x - TILE_SIZE, y }, target), Left });
 	distances.push_back({ GetDistance({ x, y - TILE_SIZE }, target), Up });
+	distances.push_back({ GetDistance({ x - TILE_SIZE, y }, target), Left });
 	distances.push_back({ GetDistance({ x, y + TILE_SIZE }, target), Down });
+	distances.push_back({ GetDistance({ x + TILE_SIZE, y }, target), Right });
 
 	std::sort(distances.begin(), distances.end());
 
@@ -256,12 +260,13 @@ std::vector<Direction> Ghost::ClosestPath(SDL_Point target)
 
 float Ghost::GetDistance(SDL_Point point1, SDL_Point point2)
 {
-	return abs(point1.x - point2.x) + abs(point1.y - point2.y);
+	// Note: Manahattan Distance doesn't work, USE STRAIGHT LINE DISTANCE ONLY
+	return abs(pow(point1.x, 2) - pow(point2.x, 2)) + abs(pow(point1.y, 2) - pow(point2.y, 2));
 }
 
 void Ghost::Draw()
 {
-	SDL_Rect srcRect = { ghostType * frameWidth, currentDirection * frameHeight, frameWidth, frameHeight };
+	SDL_Rect srcRect = { (int)ghostType * frameWidth, currentDirection * frameHeight, frameWidth, frameHeight };
 	SDL_Rect dstRect = { x - 8, y - 8, TILE_SIZE + 2 * 8, TILE_SIZE + 2 * 8 };
 	SDL_RenderCopy(renderer, texture, &srcRect, &dstRect);
 }

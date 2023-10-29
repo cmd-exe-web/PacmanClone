@@ -24,7 +24,7 @@ Game::Game()
 	}
 	maze = Maze(renderer);
 	pacman = Pacman(renderer);
-	ghost = Ghost(renderer);
+	blinky = Blinky(renderer);
 
 	score = 0;
 }
@@ -77,7 +77,7 @@ void Game::HandleEvents()
 void Game::Update()
 {
 	pacman.Update(maze);
-	ghost.Update(maze, pacman);
+	blinky.Update(maze, pacman);
 }
 
 void Game::Render()
@@ -88,7 +88,7 @@ void Game::Render()
 	//Stuff to Draw
 	maze.Draw();
 	pacman.Draw();
-	ghost.Draw();
+	blinky.Draw();
 
 	SDL_RenderPresent(renderer);
 }
