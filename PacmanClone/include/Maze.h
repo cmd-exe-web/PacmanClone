@@ -14,6 +14,7 @@ public:
 	bool IsFood(int x, int y);
 	bool IsIntersection(int x, int y);
 	void ConsumeFood(int x, int y);
+	bool isOpen;
 private:
 	std::vector<std::string> layout;
 	int tileSize;

@@ -9,6 +9,8 @@
 #include "Pacman.h"
 #include "Ghost.h"
 #include "Blinky.h"
+#include "Inky.h"
+#include "Pinky.h"
 #include "BottomHUD.h"
 
 class Game {
@@ -31,4 +33,7 @@ private:
 	Maze maze;
 	Pacman pacman;
 	Blinky blinky;
+
+	Inky inky;
+	Pinky pinky;
 };

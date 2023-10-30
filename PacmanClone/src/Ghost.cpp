@@ -28,7 +28,7 @@ Ghost::Ghost(SDL_Renderer* renderer)
 	frameHeight = 160;
 	frameWidth = 160;
 
-	currentMode = Chase;
+	currentMode = Mode::Chase;
 }
 
 void Ghost::Update(Maze& maze, Pacman& pacman)

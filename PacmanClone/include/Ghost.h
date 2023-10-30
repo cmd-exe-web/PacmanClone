@@ -8,8 +8,8 @@
 #include "Maze.h"
 #include "Pacman.h"
 
-enum Mode {
-	Chase, Scatter, Scared
+enum class Mode {
+	Chase, Scatter, Frightened
 };
 
 struct Channels {
@@ -39,17 +39,16 @@ public:
 	std::vector<Direction> ClosestPath(SDL_Point target);
 	float GetDistance(SDL_Point point1, SDL_Point point2);
 	void Draw();
+	int x, y;
 protected:
 	GhostType ghostType;
-	int x, y;
+	Mode currentMode;
+	Direction currentDirection;
+	int frameWidth, frameHeight;
+	SDL_Texture* texture;
+	SDL_Renderer* renderer;
+	SDL_Point scatterTarget;
 private:
 	float velocity = 1;
-	Direction currentDirection;
-	SDL_Renderer* renderer;
-
 	SDL_Point currentTarget;
-	Mode currentMode;
-
-	SDL_Texture* texture;
-	int frameWidth, frameHeight;
 };

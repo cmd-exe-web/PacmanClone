@@ -25,6 +25,8 @@ Game::Game()
 	maze = Maze(renderer);
 	pacman = Pacman(renderer);
 	blinky = Blinky(renderer);
+	inky = Inky(renderer);
+	pinky = Pinky(renderer);
 
 	score = 0;
 }
@@ -78,6 +80,8 @@ void Game::Update()
 {
 	pacman.Update(maze);
 	blinky.Update(maze, pacman);
+	inky.Update(maze, pacman, blinky);
+	pinky.Update(maze, pacman);
 }
 
 void Game::Render()
@@ -89,6 +93,9 @@ void Game::Render()
 	maze.Draw();
 	pacman.Draw();
 	blinky.Draw();
+	inky.Draw();
+	pinky.Draw();
+
 
 	SDL_RenderPresent(renderer);
 }

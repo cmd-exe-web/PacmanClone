@@ -58,6 +58,7 @@ Maze::Maze(SDL_Renderer* renderer)
 		exit(EXIT_FAILURE);
 	}
 	SDL_FreeSurface(surface);
+	isOpen = true;
 }
 
 void Maze::Draw()
